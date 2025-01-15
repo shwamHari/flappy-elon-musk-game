@@ -7,18 +7,15 @@ pygame.init()
 # Screen dimensions
 WIDTH, HEIGHT = 400, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Flappy Bird Clone with a Twist")
+pygame.display.set_caption("Flappy Elon Musk")
 
 # Colors
 WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-GREEN = (0, 255, 0)
-BLUE = (0, 0, 255)
 
 # Game settings
 gravity = 0.25
 bird_jump = -6
-bird_width, bird_height = 30, 30
+bird_width, bird_height = 50, 50  # Adjusted for Elon Musk's image
 pipe_width = 50
 pipe_gap = 150
 pipe_velocity = 4
@@ -26,14 +23,19 @@ pipe_velocity = 4
 # Fonts
 font = pygame.font.SysFont("Arial", 30)
 
+# Load images
+elon_image = pygame.image.load("images/elon_closed.png")  # Use Elon Musk image
+elon_image = pygame.transform.scale(elon_image, (bird_width, bird_height))  # Resize as needed
+cybertruck_image = pygame.image.load("images/cybertruck.png")  # Use Cybertruck image
+model_s_image = pygame.image.load("images/model_s.png")  # Use Model S image
+
 # Bird class
 class Bird:
     def __init__(self):
         self.x = WIDTH // 4
         self.y = HEIGHT // 2
         self.velocity = 0
-        self.image = pygame.Surface((bird_width, bird_height))
-        self.image.fill(BLUE)
+        self.image = elon_image
 
     def update(self):
         self.velocity += gravity
@@ -50,17 +52,22 @@ class Pipe:
     def __init__(self):
         self.x = WIDTH
         self.height = random.randint(100, HEIGHT - pipe_gap - 100)
-        self.top = pygame.Rect(self.x, 0, pipe_width, self.height)
-        self.bottom = pygame.Rect(self.x, self.height + pipe_gap, pipe_width, HEIGHT - self.height - pipe_gap)
+        self.top_height = self.height  # Height of the top pipe
+        self.bottom_height = HEIGHT - self.height - pipe_gap  # Height of the bottom pipe
+
+        # Stretch the images to fill the pipe height
+        self.top_image = pygame.transform.scale(cybertruck_image, (pipe_width, self.top_height))
+        self.bottom_image = pygame.transform.scale(model_s_image, (pipe_width, self.bottom_height))
 
     def update(self):
         self.x -= pipe_velocity
-        self.top.x = self.x
-        self.bottom.x = self.x
 
     def draw(self, screen):
-        pygame.draw.rect(screen, GREEN, self.top)
-        pygame.draw.rect(screen, GREEN, self.bottom)
+        # Draw the top pipe (Cybertruck image)
+        screen.blit(self.top_image, (self.x, 0))
+
+        # Draw the bottom pipe (Model S image)
+        screen.blit(self.bottom_image, (self.x, self.height + pipe_gap))
 
 # Game loop
 def game_loop():
@@ -109,14 +116,14 @@ def game_loop():
                 pipe.draw(screen)
 
             # Draw the score
-            score_text = font.render(f"Score: {score}", True, BLACK)
+            score_text = font.render(f"Score: {score}", True, (0, 0, 0))
             screen.blit(score_text, (10, 10))
 
         # Draw Game Over screen
         if game_over:
-            game_over_text = font.render("Game Over!", True, BLACK)
+            game_over_text = font.render("Game Over!", True, (0, 0, 0))
             screen.blit(game_over_text, (WIDTH // 2 - game_over_text.get_width() // 2, HEIGHT // 2))
-            restart_text = font.render("Press R to Restart", True, BLACK)
+            restart_text = font.render("Press R to Restart", True, (0, 0, 0))
             screen.blit(restart_text, (WIDTH // 2 - restart_text.get_width() // 2, HEIGHT // 2 + 40))
 
             keys = pygame.key.get_pressed()
@@ -130,9 +137,3 @@ game_loop()
 
 # Quit Pygame
 pygame.quit()
-
-
-
-
-
-
