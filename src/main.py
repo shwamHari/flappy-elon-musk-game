@@ -5,29 +5,36 @@ import random
 pygame.init()
 
 # Screen dimensions
-WIDTH, HEIGHT = 400, 600
+WIDTH, HEIGHT = 450, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Flappy Elon Musk")
+pygame.display.set_caption("Flappy Bird Clone with a Twist")
 
 # Colors
 WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
 
 # Game settings
 gravity = 0.25
 bird_jump = -6
-bird_width, bird_height = 50, 50  # Adjusted for Elon Musk's image
+bird_width, bird_height = 50, 50
 pipe_width = 50
-pipe_gap = 150
+pipe_gap = int(150 * (WIDTH / 450))  # Adjusting pipe gap proportionally
 pipe_velocity = 4
 
 # Fonts
 font = pygame.font.SysFont("Arial", 30)
 
-# Load images
-elon_image = pygame.image.load("images/elon_closed.png")  # Use Elon Musk image
-elon_image = pygame.transform.scale(elon_image, (bird_width, bird_height))  # Resize as needed
-cybertruck_image = pygame.image.load("images/cybertruck.png")  # Use Cybertruck image
-model_s_image = pygame.image.load("images/model_s.png")  # Use Model S image
+# Load images with transparency
+elon_image = pygame.image.load("images/elon_closed.png").convert_alpha()  # Using convert_alpha for transparency
+elon_image = pygame.transform.scale(elon_image, (bird_width, bird_height))  # Scale Elon image to bird size
+
+cybertruck_image = pygame.image.load("images/cybertruck.png").convert_alpha()
+model_s_image = pygame.image.load("images/model_s.png").convert_alpha()
+
+# Create masks for collision detection
+elon_mask = pygame.mask.from_surface(elon_image)
+cybertruck_mask = pygame.mask.from_surface(cybertruck_image)
+model_s_mask = pygame.mask.from_surface(model_s_image)
 
 # Bird class
 class Bird:
@@ -36,6 +43,7 @@ class Bird:
         self.y = HEIGHT // 2
         self.velocity = 0
         self.image = elon_image
+        self.mask = elon_mask
 
     def update(self):
         self.velocity += gravity
@@ -46,6 +54,10 @@ class Bird:
 
     def draw(self, screen):
         screen.blit(self.image, (self.x, self.y))
+
+    def get_rect(self):
+        # Return a rectangle to track the position of the bird for collision detection
+        return pygame.Rect(self.x, self.y, bird_width, bird_height)
 
 # Pipe class
 class Pipe:
@@ -59,15 +71,40 @@ class Pipe:
         self.top_image = pygame.transform.scale(cybertruck_image, (pipe_width, self.top_height))
         self.bottom_image = pygame.transform.scale(model_s_image, (pipe_width, self.bottom_height))
 
+        # Create masks for collision detection
+        self.top_mask = pygame.mask.from_surface(self.top_image)
+        self.bottom_mask = pygame.mask.from_surface(self.bottom_image)
+
     def update(self):
         self.x -= pipe_velocity
 
     def draw(self, screen):
-        # Draw the top pipe (Cybertruck image)
         screen.blit(self.top_image, (self.x, 0))
-
-        # Draw the bottom pipe (Model S image)
         screen.blit(self.bottom_image, (self.x, self.height + pipe_gap))
+
+    def get_top_rect(self):
+        return pygame.Rect(self.x, 0, pipe_width, self.top_height)
+
+    def get_bottom_rect(self):
+        return pygame.Rect(self.x, self.height + pipe_gap, pipe_width, self.bottom_height)
+
+    def check_collision(self, bird):
+        # Check if the bird collides with the top or bottom pipe using the masks
+        top_rect = self.get_top_rect()
+        bottom_rect = self.get_bottom_rect()
+
+        # Only check for collision if the bird is within the pipe's horizontal range
+        if top_rect.colliderect(bird.get_rect()):
+            offset = (self.x - bird.x, 0)  # Calculate offset for mask comparison
+            if self.top_mask.overlap(bird.mask, offset):
+                return True  # Collision with top pipe
+
+        if bottom_rect.colliderect(bird.get_rect()):
+            offset = (self.x - bird.x, self.height + pipe_gap - bird.y)  # Calculate offset for bottom pipe
+            if self.bottom_mask.overlap(bird.mask, offset):
+                return True  # Collision with bottom pipe
+
+        return False
 
 # Game loop
 def game_loop():
@@ -94,6 +131,10 @@ def game_loop():
             # Update bird position
             bird.update()
 
+            # Check for top and bottom screen collisions
+            if bird.y <= 0 or bird.y + bird_height >= HEIGHT:
+                game_over = True
+
             # Add new pipes
             if pipes[-1].x < WIDTH - 200:
                 pipes.append(Pipe())
@@ -105,10 +146,9 @@ def game_loop():
                     pipes.remove(pipe)
                     score += 1
 
-                # Check for collisions
-                if bird.x + bird_width > pipe.x and bird.x < pipe.x + pipe_width:
-                    if bird.y < pipe.height or bird.y + bird_height > pipe.height + pipe_gap:
-                        game_over = True
+                # Check for collisions using masks
+                if pipe.check_collision(bird):
+                    game_over = True
 
             # Draw everything
             bird.draw(screen)
