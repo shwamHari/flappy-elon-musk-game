@@ -85,5 +85,5 @@ The game window will open, displaying the welcome screen. Press the **SPACE** ke
 
 ---
 
-<img width="1254" alt="Screenshot 2025-01-16 at 8 24 12 PM" src="https://github.com/user-attachments/assets/1ea1b2a8-0399-4856-b77d-b48a6976c1fa" />
+<img width="640" alt="Screenshot 2025-01-16 at 8 19 50 PM" src="https://github.com/user-attachments/assets/6f4f855d-84aa-4531-8169-4a75aef0bdfa" />
 
