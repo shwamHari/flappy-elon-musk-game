@@ -5,6 +5,13 @@
 
 Flappy Elon Musk is a fun and interactive clone of the classic *Flappy Bird* game, where players control Elon Musk, guiding him through obstacles while trying to achieve the highest score. The game features dynamic animations of Elon Musk with a jumping animation that alternates between an open and closed mouth as he moves up and down. The goal is to avoid obstacles, which are Tesla cars and Cybertrucks, and collect points by passing through them.
 
+## Demo
+
+
+https://github.com/user-attachments/assets/c8e1d871-2092-4822-a932-2c07d342e106
+
+
+---
 ## Features
 
 - **Elon Musk Animation**: Animated jumping behavior with an open mouth when going up and a closed mouth when going down.
@@ -41,7 +48,7 @@ The game uses image files for displaying the character and obstacles. Ensure the
 Once the dependencies are installed and the assets are in place, you can start the game by running:
 
 ```bash
-python main.py
+python src/main.py
 ```
 
 The game window will open, displaying the welcome screen. Press the **SPACE** key to start the game.
