@@ -84,6 +84,6 @@ The game window will open, displaying the welcome screen. Press the **SPACE** ke
 - Defines game constants and variables, used in functions and classes throughout the game.
 
 ---
-<img width="559" alt="Screenshot 2025-01-16 at 8 17 55 PM" src="https://github.com/user-attachments/assets/709af6b5-0574-4c21-9a47-d1aed9cbdc00" />
+<img width="640" alt="Screenshot 2025-01-16 at 8 19 50 PM" src="https://github.com/user-attachments/assets/aec9fb53-1553-469f-a111-1d1f8842436d" />
 
 
